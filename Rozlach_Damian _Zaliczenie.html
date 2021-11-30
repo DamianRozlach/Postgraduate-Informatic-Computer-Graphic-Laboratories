@@ -37,11 +37,16 @@
            // Global camera object
            var camera;
 
+           let z = 40;
+           let x = 15;
+           let r;
+
            // Initialize the scene
            initializeScene();
+           animateScene(); 
 
            // Render the scene (map the 3D world to the 2D scene)
-           renderScene();
+           //renderScene();
 
            /**
             * Initialze the scene.
@@ -104,14 +109,9 @@
                // the scene.
                // After definition, the camera has to be added to the scene.
                camera = new THREE.PerspectiveCamera(45, canvasWidth / canvasHeight, 1, 100);
-               camera.position.set(15, 14, 40);
+               camera.position.set(x, 14, z);
                camera.lookAt(scene.position);
                scene.add(camera);
-
-               // Create the triangle (or any arbitrary geometry).
-               // 1. Instantiate the geometry object
-               // 2. Add the vertices
-               // 3. Define the faces by setting the vertices indices
                
 
                
@@ -121,9 +121,35 @@
                const materialHouse = new THREE.MeshLambertMaterial( {color:0x238FDE,side:THREE.FrontSide, depthWrite: true} );
                const cubeHouse = new THREE.Mesh( geometryHouse, materialHouse );
                cubeHouse.receiveShadow = false;
-               cubeHouse.castShadow = true;
+               cubeHouse.castShadow = false;
                cubeHouse.position.set(0.0,0.0,0.0);
                scene.add( cubeHouse );
+
+
+
+               const geometryKomin = new THREE.BoxGeometry( 1, 3, 1 );
+               const materialKomin = new THREE.MeshLambertMaterial( {color:0xF50F00,side:THREE.FrontSide, depthWrite: true} );
+               const cubeKomin = new THREE.Mesh( geometryKomin, materialKomin );
+               cubeKomin.receiveShadow = false;
+               cubeKomin.castShadow = true;
+               cubeKomin.position.set(3.0,8.0,-3.0);
+               scene.add( cubeKomin );
+
+               const geometryDrzwi = new THREE.BoxGeometry( 3, 5, 1 );
+               const materialDrzwi = new THREE.MeshLambertMaterial( {color:0x0A0A0A,side:THREE.FrontSide, depthWrite: true} );
+               const cubeDrzwi = new THREE.Mesh( geometryDrzwi, materialDrzwi );
+               cubeDrzwi.receiveShadow = false;
+               cubeDrzwi.castShadow = true;
+               cubeDrzwi.position.set(4.0,-2.5,7.3);
+               scene.add( cubeDrzwi );
+
+               const geometryOkno = new THREE.BoxGeometry( 5, 5, 1 );
+               const materialOkno = new THREE.MeshLambertMaterial( {color:0x040404,side:THREE.FrontSide, depthWrite: true} );
+               const cubeOkno = new THREE.Mesh( geometryOkno, materialOkno );
+               cubeOkno.receiveShadow = false;
+               cubeOkno.castShadow = true;
+               cubeOkno.position.set(-4.0,1.5,7.3);
+               scene.add( cubeOkno );
 
               //dach
 
@@ -133,7 +159,6 @@
                 Dach.castShadow = true;
                 Dach.position.set(0,7,0);
                 Dach.rotateY(0.7854);
-                //Dach.scale(1,0.7.1)
                 scene.add( Dach );
 
                 //drzewo1
@@ -184,33 +209,43 @@
                
 
                //podloze z trawa
-
-               const trawa = new THREE.Mesh( new THREE.PlaneGeometry( 100, 100 ), new THREE.MeshLambertMaterial( { color: 0x86C11D, depthWrite: true, side:THREE.DoubleSide } ) );
-			   trawa.rotation.x = - Math.PI / 2;
-			   trawa.receiveShadow = true;
-               trawa.position.set(0,-5,0);
-			   scene.add( trawa );
-
-
-               //switalo
-               const Light = new THREE.DirectionalLight( 0xffffff, 0.9 );
-               Light.castShadow = true;
-               Light.position.set(40,40,2);
-               Light.lookAt(scene.position);
-               scene.add( Light );
                
-               Light.shadow.mapSize.width = 512; // default
-               Light.shadow.mapSize.height = 512; // default
-               Light.shadow.camera.near = 0.5; // default
-               Light.shadow.camera.far = 500; // default
 
-               const Alight = new THREE.AmbientLight( 0x404040 ); // soft white light
+               const Gtrawa = new THREE.BoxGeometry( 100, 0.1, 100 );
+               const Mtrawa = new THREE.MeshLambertMaterial( {color:0x86C11D,side:THREE.FrontSide, depthWrite: true} );
+               const trawa = new THREE.Mesh( Gtrawa, Mtrawa );
+               trawa.receiveShadow = true;
+               trawa.castShadow = false;
+               trawa.position.set(0.0,-5,0.0);
+               scene.add( trawa );
+
+               //swiatlo
+               const LightD = new THREE.DirectionalLight( 0xffffff, 1 );
+               LightD.castShadow = false;
+               LightD.position.set(30,30,6);
+               LightD.lookAt(scene.position);
+               scene.add( LightD );
+               
+               LightD.shadow.mapSize.width = 200; 
+               LightD.shadow.mapSize.height = 1024;
+               LightD.shadow.camera.near = 1; 
+               LightD.shadow.camera.far = 200; 
+
+               const Alight = new THREE.AmbientLight( 0x404040 ); 
                scene.add( Alight );
 
             }
-           /**
-            * Render the scene. Map the 3D world to the 2D screen.
-            */
+           
+            function animateScene(){ 
+               r = Date.now() * 0.0005;
+               x=30*Math.sin(r);
+               z=40*Math.cos(r);
+               camera.position.set(x, 14, z);
+               camera.lookAt(scene.position);
+               requestAnimationFrame(animateScene); 
+               renderScene(); 
+           } 
+
            function renderScene(){
                renderer.render(scene, camera);
            }
